@@ -14,7 +14,7 @@ class CountdownDisplay extends StatelessWidget {
           ? ' for $secondsRemaining seconds'
           : ''}',
       style: TextStyle(
-          fontSize: 20, color: Colors.purple[800], fontWeight: FontWeight.bold),
+          fontSize: 18, color: Colors.purple[800], fontWeight: FontWeight.bold),
     );
   }
 }

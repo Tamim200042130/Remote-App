@@ -1,0 +1,118 @@
+name: build_upload_notify
+
+on:
+  push:
+    branches:
+      - main
+      - edit
+
+jobs:
+  build_upload_notify:
+    name: Build, Upload, and Notify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+
+      - name: Get Branch Name
+        id: branch
+        run: echo "branch=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+
+      - name: Get Today's Date
+        id: date
+        run: echo "date=$(date +'%d%m%y')" >> $GITHUB_OUTPUT
+
+      - name: Read Current Version
+        id: read_version
+        run: echo "version=$(cat version.txt)" >> $GITHUB_OUTPUT
+
+      - name: Increment Version
+        id: increment_version
+        run: |
+          current_version="${{ steps.read_version.outputs.version }}"
+          IFS='.' read -r -a version_parts <<< "$current_version"
+          major=${version_parts[0]}
+          minor=${version_parts[1]}
+          
+          if [ $minor -eq 9 ]; then
+            major=$((major + 1))
+            minor=0
+          else
+            minor=$((minor + 1))
+          fi
+          
+          new_version="$major.$minor"
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+          echo $new_version > version.txt
+
+      - name: Install Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Google API Client
+        run: pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Rename APK File
+        run: |
+          mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
+
+      - name: Archive Files
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip
+          zip -r archive.zip build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Commit Updated Version
+        run: |
+          git add version.txt
+          git commit -m "Increment version to ${{ steps.increment_version.outputs.new_version }}"
+          git push origin HEAD:${{ github.ref }}
+
+
+      - name: Push to Releases
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk,build/ios/iphoneos/app.ipa"
+          tag: v${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
+          token: ${{ secrets.GH_PAT }}
+
+
+#      - name: Upload APK to Google Play Console
+#        uses: r0adkll/upload-google-play@v1
+#        with:
+#          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON }}
+#          packageName: "com.tamimibnhossain.financemasterpro"
+#          releaseFile: "build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
+#          track: "internal"
+#          releaseName: "Finance Master Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
+#          whatsNew: "New Version of Finance Master Pro is available.
+#          releaseNotesFile: "build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
+#          userFraction: "0.1"
+#          releaseStatus: "draft"
+#          consoleTimeout: 600000
+#

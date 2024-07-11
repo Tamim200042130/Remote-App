@@ -37,10 +37,6 @@ class _RemoteScreenState extends State<RemoteScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 30),
-
-
-
 
           // Display the state of the current device
           Container(
@@ -68,8 +64,6 @@ class _RemoteScreenState extends State<RemoteScreen> {
           ),
 
           const SizedBox(height: 20),
-
-
 
           // Device buttons
           Row(
@@ -100,16 +94,14 @@ class _RemoteScreenState extends State<RemoteScreen> {
           ),
           const SizedBox(height: 20),
 
-
-
           // Countdown display
           if (secondsRemaining > 0)
-            CountdownDisplay(
-              deviceLabel: lastDeviceTurnedOff ?? '',
-              secondsRemaining: secondsRemaining,
+            Expanded(
+              child: CountdownDisplay(
+                deviceLabel: lastDeviceTurnedOff ?? '',
+                secondsRemaining: secondsRemaining,
+              ),
             ),
-          const Spacer(),
-
 
 
           // Undo button
@@ -143,7 +135,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
             style: ElevatedButton.styleFrom(
               primary: Colors.purple[800],
               padding: const EdgeInsets.all(8.0),
-              fixedSize: Size(800, 80),
+              fixedSize: Size(800, 50),
             ),
             child: const Text(
               'Undo',
@@ -154,8 +146,6 @@ class _RemoteScreenState extends State<RemoteScreen> {
       ),
     );
   }
-
-
 
   // Build device button
   Widget _buildDeviceButton(RemoteDevice device) {
@@ -195,7 +185,6 @@ class _RemoteScreenState extends State<RemoteScreen> {
     );
   }
 
-
   //Start the off timer
   void _startOffTimer(RemoteDevice device) {
     _cancelOffTimer(device.label);
@@ -220,8 +209,6 @@ class _RemoteScreenState extends State<RemoteScreen> {
     );
   }
 
-
-
   //Cancel the off timer
   void _cancelOffTimer(String deviceLabel) {
     offTimers[deviceLabel]?.cancel();
@@ -229,7 +216,6 @@ class _RemoteScreenState extends State<RemoteScreen> {
       offTimers.remove(deviceLabel);
     });
   }
-
 
   //Cancel all off timers
   void _cancelAllOffTimers() {
