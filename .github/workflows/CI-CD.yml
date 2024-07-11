@@ -126,13 +126,10 @@ on:
 
 jobs:
   store_deploy_android:
-    # Only run this job if the branch name starts with 'release/'
-    if: startsWith(github.ref, 'refs/heads/release/')
     name: android store release
     runs-on: ubuntu-latest
     env:
       # Setup env variables that will be used throughout the workflow
-      
       JAVA_VERSION: 12.0
       FLUTTER_VERSION: 3.13.1
       AAB_PATH: build/app/outputs/bundle/release/app-release.aab
