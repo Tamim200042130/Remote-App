@@ -133,7 +133,6 @@ class _RemoteScreenState extends State<RemoteScreen> {
               }
             },
             style: ElevatedButton.styleFrom(
-              primary: Colors.purple[800],
               padding: const EdgeInsets.all(8.0),
               fixedSize: Size(800, 50),
             ),
@@ -168,7 +167,7 @@ class _RemoteScreenState extends State<RemoteScreen> {
           }
         },
         style: ElevatedButton.styleFrom(
-          primary: device.isOn ? Colors.green : Colors.red,
+          backgroundColor: device.isOn ? Colors.green : Colors.red,
           shape: CircleBorder(),
           side: BorderSide(color: Colors.purple[800]!, width: 5.0),
           fixedSize: const Size(100, 100),
