@@ -71,18 +71,15 @@ jobs:
 
       - name: Rename APK File
         run: |
-          mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
-          mv build/app/outputs/apk/release/app-armeabi-v7a-release.apk build/app/outputs/apk/release/Remote_Master_armeabi_v7a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-armeabi-v7a.apk
-          mv build/app/outputs/apk/release/app-arm64-v8a-release.apk build/app/outputs/apk/release/Remote_Master_arm64_v8a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-arm64-v8a.apk
-
-
+          mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/Finance-Master-Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+          mv build/app/outputs/apk/release/app-armeabi-v7a-release.apk build/app/outputs/apk/release/Finance-Master-Pro_armeabi_v7a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-armeabi-v7a.apk
+          mv build/app/outputs/apk/release/app-arm64-v8a-release.apk build/app/outputs/apk/release/Finance-Master-Pro_arm64_v8a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-arm64-v8a.apk
 
       - name: Archive Files
         run: |
           sudo apt-get update
           sudo apt-get install -y zip
-          zip -r archive.zip build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
-
+          zip -r archive.zip build/app/outputs/apk/release/Finance-Master-Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
 
       - name: Configure Git
         run: |
@@ -95,29 +92,26 @@ jobs:
           git commit -m "Increment version to ${{ steps.increment_version.outputs.new_version }}"
           git push origin HEAD:${{ github.ref }}
 
-
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk,
-            build/app/outputs/apk/release/Remote_Master_armeabi_v7a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-armeabi-v7a.apk,
-            build/app/outputs/apk/release/Remote_Master_arm64_v8a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-arm64-v8a.apk"
-                       build/ios/iphoneos/app.ipa"
+          artifacts: |
+            build/app/outputs/apk/release/Finance-Master-Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+            build/app/outputs/apk/release/Finance-Master-Pro_armeabi_v7a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-armeabi-v7a.apk
+            build/app/outputs/apk/release/Finance-Master-Pro_arm64_v8a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-arm64-v8a.apk
           tag: v${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
           token: ${{ secrets.GH_PAT }}
-
 
 #      - name: Upload APK to Google Play Console
 #        uses: r0adkll/upload-google-play@v1
 #        with:
 #          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON }}
 #          packageName: "com.tamimibnhossain.financemasterpro"
-#          releaseFile: "build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
+#          releaseFile: "build/app/outputs/apk/release/Finance-Master-Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
 #          track: "internal"
 #          releaseName: "Finance Master Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}"
 #          whatsNew: "New Version of Finance Master Pro is available.
-#          releaseNotesFile: "build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
+#          releaseNotesFile: "build/app/outputs/apk/release/Finance-Master-Pro-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk"
 #          userFraction: "0.1"
 #          releaseStatus: "draft"
 #          consoleTimeout: 600000
-#
