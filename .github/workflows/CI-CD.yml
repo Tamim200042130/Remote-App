@@ -197,3 +197,4 @@ jobs:
           packageName: com.devstation.remoteapp
           releaseFiles: ${{ env.AAB_PATH }}
           track: internal
+          changesNotSentForReview: true
