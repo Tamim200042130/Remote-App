@@ -10,6 +10,7 @@ class RemoteApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Remote App',
       home: RemoteScreen(),
     );
   }
