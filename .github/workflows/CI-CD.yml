@@ -67,21 +67,19 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release --split-per-abi
+        run: flutter build apk --release
 
-      - name: List Build Directory
-        run: ls -R build/app/outputs/apk/release
-
-      - name: Rename APK Files
+      - name: Rename APK File
         run: |
-          mv build/app/outputs/apk/release/app-armeabi-v7a-release.apk build/app/outputs/apk/release/Remote_Master_armeabi_v7a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-armeabi-v7a.apk
-          mv build/app/outputs/apk/release/app-arm64-v8a-release.apk build/app/outputs/apk/release/Remote_Master_arm64_v8a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-arm64-v8a.apk
+          mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
 
       - name: Archive Files
         run: |
           sudo apt-get update
           sudo apt-get install -y zip
-          zip -r archive.zip    build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk build/app/outputs/apk/release/Remote_Master_armeabi_v7a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-armeabi-v7a.apk build/app/outputs/apk/release/Remote_Master_arm64_v8a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-arm64-v8a.apk
+          zip -r archive.zip build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
+
 
       - name: Configure Git
         run: |
@@ -94,15 +92,14 @@ jobs:
           git commit -m "Increment version to ${{ steps.increment_version.outputs.new_version }}"
           git push origin HEAD:${{ github.ref }}
 
+
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
-          artifacts: |
-            build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk
-            build/app/outputs/apk/release/Remote_Master_armeabi_v7a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-armeabi-v7a.apk
-            build/app/outputs/apk/release/Remote_Master_arm64_v8a-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}-arm64-v8a.apk
+          artifacts: "build/app/outputs/apk/release/Remote_Master-${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}.apk,build/ios/iphoneos/app.ipa"
           tag: v${{ steps.increment_version.outputs.new_version }}.${{ steps.date.outputs.date }}
           token: ${{ secrets.GH_PAT }}
+
 
 #      - name: Upload APK to Google Play Console
 #        uses: r0adkll/upload-google-play@v1
@@ -117,3 +114,4 @@ jobs:
 #          userFraction: "0.1"
 #          releaseStatus: "draft"
 #          consoleTimeout: 600000
+#
