@@ -16,7 +16,7 @@ workflows:
     scripts:
       - name: Setup the keystore
         script: |
-          echo $KEYSTORE_FILE | base64 --decode > /tmp/keystore.jks
+          echo $KEYSTORE_FILE | base64 --decode > /tmp/remotemaster.jks
           cat >> "$CM_BUILD_DIR/android/key.properties" << EOF
           storePassword=$KEYSTORE_PASSWORD
           keyPassword=$KEYSTORE_KEY_PASSWORD
