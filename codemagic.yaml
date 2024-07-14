@@ -21,7 +21,7 @@ workflows:
           storePassword=$KEYSTORE_PASSWORD
           keyPassword=$KEYSTORE_KEY_PASSWORD
           keyAlias=upload 
-          storeFile=/tmp/keystore.jks
+          storeFile=/tmp/remotemaster.jks
           EOF
       - name: Build AAB
         script: |
